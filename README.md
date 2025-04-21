@@ -90,26 +90,8 @@ A modern, web-based recruitment and interview management system built with Djang
 - Interviewers can view assigned interviews and provide feedback.
 
 ## Project Structure
-nterview_system/
-│
-├── recruitment/           # Main Django app
-│   ├── migrations/
-│   ├── templates/
-│   ├── static/
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── urls.py
-│   ├── views.py
-│   └── ...
-├── interview_system/      # Django project settings
-│   ├── settings.py
-│   ├── urls.py
-│   └── ...
-├── manage.py
-├── requirements.txt
-└── README.md
+
+<pre> \`\`\` interview_system/ │ ├── recruitment/ # Main Django app │ ├── migrations/ │ ├── templates/ │ ├── static/ │ ├── admin.py │ ├── apps.py │ ├── forms.py │ ├── models.py │ ├── urls.py │ ├── views.py │ └── ... ├── interview_system/ # Django project settings │ ├── settings.py │ ├── urls.py │ └── ... ├── manage.py ├── requirements.txt └── README.md \`\`\` </pre>
 
 
 ## Contributing
@@ -122,7 +104,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For questions or support, please contact [your.email@example.com](mailto:your.email@example.com) or open an issue on GitHub.
+For questions or support, please contact [tyhuynh172003@gmail.com](mailto:tyhuynh172003@gmail.com) or open an issue on GitHub.
 
 ---
 
