@@ -1,162 +1,175 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - Recruitment Interview System{% endblock %}
+{% block title %}Home - Interview System{% endblock %}
 
 {% block content %}
-<div class="bg-white shadow overflow-hidden sm:rounded-lg mb-8">
-    <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-indigo-500 to-purple-600">
-        <h1 class="text-3xl font-bold text-white">Welcome to the Recruitment Interview System</h1>
-        <p class="mt-1 max-w-2xl text-sm text-indigo-100">Streamline your recruitment process with our powerful tools</p>
-    </div>
-    <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-        <p class="text-gray-700">Manage candidates, positions, and interviews all in one place. Schedule interviews, track feedback, and make better hiring decisions.</p>
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-indigo-600 to-blue-500 rounded-xl shadow-xl overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div class="md:flex md:items-center md:justify-between">
+            <div class="md:w-1/2 mb-8 md:mb-0">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                    Find Your Dream Job or Perfect Candidate
+                </h1>
+                <p class="mt-4 text-lg text-indigo-100 max-w-3xl">
+                    Our interview system streamlines the recruitment process, connecting talented individuals with great opportunities.
+                </p>
+                <div class="mt-8 flex flex-wrap gap-4">
+                    <a href="{% url 'recruitment:public_position_list' %}" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50">
+                        Browse Open Positions
+                    </a>
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'recruitment:register' %}" class="inline-flex items-center justify-center px-5 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-indigo-700">
+                        Register as Candidate
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="Interview" class="rounded-lg shadow-lg max-w-full h-auto" style="max-height: 300px;">
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Upcoming Interviews Card -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-blue-500 to-blue-600">
-            <h3 class="text-lg leading-6 font-medium text-white">Upcoming Interviews</h3>
-            <p class="mt-1 max-w-2xl text-sm text-blue-100">Your scheduled interviews for the next few days</p>
+<!-- Stats Section -->
+<div class="mt-12 bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="px-4 py-5 sm:p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Our Impact</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-4">
+                <div class="text-4xl font-bold text-indigo-600">{{ candidates_count }}</div>
+                <div class="mt-2 text-sm font-medium text-gray-500">Registered Candidates</div>
+            </div>
+            <div class="text-center p-4">
+                <div class="text-4xl font-bold text-indigo-600">{{ open_positions_count }}</div>
+                <div class="mt-2 text-sm font-medium text-gray-500">Open Positions</div>
+            </div>
+            <div class="text-center p-4">
+                <div class="text-4xl font-bold text-indigo-600">{{ interviews_count }}</div>
+                <div class="mt-2 text-sm font-medium text-gray-500">Interviews Conducted</div>
+            </div>
         </div>
-        <div class="border-t border-gray-200">
-            {% if upcoming_interviews %}
-                <ul class="divide-y divide-gray-200">
-                    {% for interview in upcoming_interviews %}
-                        <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition duration-150">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-600 truncate">{{ interview.candidate.name }}</p>
-                                    <p class="text-sm text-gray-500">{{ interview.position.title }}</p>
-                                </div>
-                                <div class="ml-2 flex-shrink-0 flex">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        {{ interview.scheduled_date|date:"M d, Y" }} at {{ interview.scheduled_date|date:"H:i" }}
-                                    </p>
-                                </div>
+    </div>
+</div>
+
+<!-- Featured Positions -->
+<div class="mt-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Featured Positions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for position in open_positions|slice:":3" %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+                <div class="p-6 flex-grow flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-semibold text-gray-900">{{ position.title }}</h3>
+                    </div>
+                    
+                    {% if position.salary_range %}
+                        <div class="mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {{ position.salary_range }}
+                            </span>
+                        </div>
+                    {% endif %}
+                    
+                    <p class="text-sm text-gray-500 flex-grow">
+                        {{ position.description|truncatechars:120 }}
+                    </p>
+                    
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <a href="{% url 'recruitment:public_position_detail' position.id %}" class="text-indigo-600 hover:text-indigo-500 font-medium text-sm">
+                            View Details →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-3 bg-gray-50 rounded-xl p-6 text-center">
+                <p class="text-gray-500">No open positions available at the moment.</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    {% if open_positions.count > 3 %}
+        <div class="mt-6 text-center">
+            <a href="{% url 'recruitment:public_position_list' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                View All Positions
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Upcoming Interviews (for staff only) -->
+{% if user.is_authenticated and user.is_staff %}
+<div class="mt-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Upcoming Interviews</h2>
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            {% for interview in upcoming_interviews %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-indigo-600 truncate">
+                                {{ interview.candidate.name }} - {{ interview.position.title }}
+                            </p>
+                            <div class="ml-2 flex-shrink-0 flex">
+                                <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                    {{ interview.scheduled_date|date:"M d, Y" }} at {{ interview.scheduled_date|time:"H:i" }}
+                                </p>
                             </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="px-4 py-5 sm:p-6 text-center">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
+                    No upcoming interviews scheduled.
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recruitment Process -->
+<div class="mt-12 bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="px-4 py-5 sm:p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Our Recruitment Process</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center p-4">
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-md bg-indigo-500 text-white">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                </div>
+                <h3 class="mt-3 text-lg font-medium text-gray-900">1. Application</h3>
+                <p class="mt-2 text-sm text-gray-500">Submit your application with resume and cover letter</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-md bg-indigo-500 text-white">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No upcoming interviews</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by scheduling a new interview.</p>
                 </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Open Positions Card -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-green-500 to-green-600">
-            <h3 class="text-lg leading-6 font-medium text-white">Open Positions</h3>
-            <p class="mt-1 max-w-2xl text-sm text-green-100">Currently active job positions</p>
-        </div>
-        <div class="border-t border-gray-200">
-            {% if open_positions %}
-                <ul class="divide-y divide-gray-200">
-                    {% for position in open_positions %}
-                        <li class="px-4 py-4 sm:px-6 hover:bg-gray-50 transition duration-150">
-                            <!-- Thêm liên kết vào tiêu đề vị trí công việc -->
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-600 truncate">
-                                        <a href="{% url 'recruitment:public_position_detail' position.id %}" class="hover:underline">
-                                            {{ position.title }}
-                                        </a>
-                                    </p>
-                                </div>
-                                <div class="ml-2 flex-shrink-0 flex">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="px-4 py-5 sm:p-6 text-center">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <h3 class="mt-3 text-lg font-medium text-gray-900">2. Screening</h3>
+                <p class="mt-2 text-sm text-gray-500">Initial review of your qualifications</p>
+            </div>
+            <div class="text-center p-4">
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-md bg-indigo-500 text-white">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No open positions</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by creating a new position.</p>
                 </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<!-- Quick Stats Section -->
-<!-- Thêm vào phần dưới của trang chủ -->
-<div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Access Options</h3>
-        <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
-                <div class="px-4 py-5 sm:p-6">
-                    <h4 class="text-lg font-medium text-gray-900">For Candidates</h4>
-                    <p class="mt-1 text-sm text-gray-500">
-                        Looking for job opportunities? Register or login to apply for open positions.
-                    </p>
-                    <div class="mt-4 flex space-x-3">
-                        <a href="{% url 'recruitment:login' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Candidate Login
-                        </a>
-                        <a href="{% url 'recruitment:register' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Register
-                        </a>
-                    </div>
-                </div>
+                <h3 class="mt-3 text-lg font-medium text-gray-900">3. Interview</h3>
+                <p class="mt-2 text-sm text-gray-500">Meet with our team to discuss your experience</p>
             </div>
-            <div class="bg-white overflow-hidden shadow rounded-lg border border-gray-200">
-                <div class="px-4 py-5 sm:p-6">
-                    <h4 class="text-lg font-medium text-gray-900">For Staff</h4>
-                    <p class="mt-1 text-sm text-gray-500">
-                        HR staff and interviewers can access the recruitment management system here.
-                    </p>
-                    <div class="mt-4">
-                        <a href="{% url 'recruitment:staff_login' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Staff Login
-                        </a>
-                    </div>
+            <div class="text-center p-4">
+                <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-md bg-indigo-500 text-white">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-    <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900">Quick Stats</h3>
-        <div class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div class="bg-indigo-50 overflow-hidden shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <dl>
-                        <dt class="text-sm font-medium text-indigo-500 truncate">Total Candidates</dt>
-                        <dd class="mt-1 text-3xl font-semibold text-indigo-900">{{ candidates_count|default:"0" }}</dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="bg-purple-50 overflow-hidden shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <dl>
-                        <dt class="text-sm font-medium text-purple-500 truncate">Total Interviews</dt>
-                        <dd class="mt-1 text-3xl font-semibold text-purple-900">{{ interviews_count|default:"0" }}</dd>
-                    </dl>
-                </div>
-            </div>
-            <div class="bg-green-50 overflow-hidden shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <dl>
-                        <dt class="text-sm font-medium text-green-500 truncate">Open Positions</dt>
-                        <dd class="mt-1 text-3xl font-semibold text-green-900">{{ open_positions_count|default:"0" }}</dd>
-                    </dl>
-                </div>
+                <h3 class="mt-3 text-lg font-medium text-gray-900">4. Decision</h3>
+                <p class="mt-2 text-sm text-gray-500">Receive our offer or feedback</p>
             </div>
         </div>
     </div>
