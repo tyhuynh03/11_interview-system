@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recruitment Interview System{% endblock %}</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-indigo-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{% url 'recruitment:home' %}" class="text-white font-bold text-xl">Interview System</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <!-- Thay đổi phần menu trong nav -->
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="{% url 'recruitment:home' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff or user.profile.user_type == 'hr' or user.profile.user_type == 'admin' %}
+                                <a href="{% url 'recruitment:interview_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Interviews</a>
+                                <a href="{% url 'recruitment:candidate_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Candidates</a>
+                                <a href="{% url 'recruitment:position_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Positions</a>
+                                <a href="{% url 'recruitment:hr_dashboard' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">HR Dashboard</a>
+                            {% elif user.profile.user_type == 'interviewer' %}
+                                <a href="{% url 'recruitment:interview_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">My Interviews</a>
+                                <a href="{% url 'recruitment:interviewer_dashboard' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                            {% else %}
+                                <a href="{% url 'recruitment:public_position_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Open Positions</a>
+                                <a href="{% url 'recruitment:candidate_profile' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">My Applications</a>
+                            {% endif %}
+                            
+                            <a href="{% url 'recruitment:logout' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+                        {% else %}
+                            <a href="{% url 'recruitment:public_position_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Careers</a>
+                            <a href="{% url 'recruitment:login' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Candidate Login</a>
+                            <a href="{% url 'recruitment:staff_login' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded-md text-sm font-medium">Staff Login</a>
+                            <a href="{% url 'recruitment:register' %}" class="bg-white text-indigo-600 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="{% if message.tags == 'success' %}bg-green-50 border-l-4 border-green-400{% elif message.tags == 'error' %}bg-red-50 border-l-4 border-red-400{% else %}bg-blue-50 border-l-4 border-blue-400{% endif %} p-4">
+                        <div class="flex">
+                            <div class="ml-3">
+                                <p class="text-sm {% if message.tags == 'success' %}text-green-700{% elif message.tags == 'error' %}text-red-700{% else %}text-blue-700{% endif %}">
+                                    {{ message }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

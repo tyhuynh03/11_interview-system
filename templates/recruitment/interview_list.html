@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Interviews - Recruitment System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Interviews</h1>
+
+<div class="card">
+    <div class="card-body">
+        {% if interviews %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Interviewer</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for interview in interviews %}
+                        <tr>
+                            <td>{{ interview.candidate.name }}</td>
+                            <td>{{ interview.position.title }}</td>
+                            <td>{{ interview.interviewer.get_full_name }}</td>
+                            <td>{{ interview.scheduled_date }}</td>
+                            <td>
+                                {% if interview.status == 'scheduled' %}
+                                    <span class="badge bg-warning">Scheduled</span>
+                                {% elif interview.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No interviews found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Open Positions - Recruitment System{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-indigo-500 to-indigo-600">
+        <h1 class="text-2xl font-bold text-white">Open Positions</h1>
+        <p class="mt-1 max-w-2xl text-sm text-indigo-100">Explore our current job openings</p>
+    </div>
+    
+    <div class="border-t border-gray-200">
+        {% if positions %}
+            <ul class="divide-y divide-gray-200">
+                {% for position in positions %}
+                    <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">{{ position.title }}</h3>
+                                <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ position.description|truncatewords:30 }}</p>
+                                {% if position.salary_range %}
+                                <p class="mt-1 text-sm font-medium text-green-600">{{ position.salary_range }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{% url 'recruitment:public_position_detail' position.id %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="px-4 py-5 sm:px-6 text-center">
+                <p class="text-gray-500">No open positions available at the moment.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

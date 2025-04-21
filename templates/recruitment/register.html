@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Recruitment System{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-indigo-500 to-purple-600">
+            <h1 class="text-2xl font-bold text-white">Register as a Candidate</h1>
+            <p class="mt-1 max-w-2xl text-sm text-indigo-100">Create an account to apply for positions</p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Username
+                    </label>
+                    <div class="mt-1">
+                        <input type="text" name="username" id="{{ form.username.id_for_label }}" autocomplete="username" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    {% if form.username.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.username.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        First Name
+                    </label>
+                    <div class="mt-1">
+                        {{ form.first_name }}
+                    </div>
+                    {% if form.first_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.first_name.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Last Name
+                    </label>
+                    <div class="mt-1">
+                        {{ form.last_name }}
+                    </div>
+                    {% if form.last_name.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.last_name.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <div class="mt-1">
+                        {{ form.email }}
+                    </div>
+                    {% if form.email.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.email.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Phone
+                    </label>
+                    <div class="mt-1">
+                        {{ form.phone }}
+                    </div>
+                    {% if form.phone.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.phone.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <div class="mt-1">
+                        <input type="password" name="password1" id="{{ form.password1.id_for_label }}" autocomplete="new-password" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    {% if form.password1.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.password1.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Confirm Password
+                    </label>
+                    <div class="mt-1">
+                        <input type="password" name="password2" id="{{ form.password2.id_for_label }}" autocomplete="new-password" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    {% if form.password2.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.password2.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'recruitment:login' %}" class="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Already have an account? Login
+                    </a>
+                    <button type="submit" class="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
