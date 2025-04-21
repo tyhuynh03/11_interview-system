@@ -91,7 +91,28 @@ A modern, web-based recruitment and interview management system built with Djang
 
 ## Project Structure
 
-<pre> \`\`\` interview_system/ │ ├── recruitment/ # Main Django app │ ├── migrations/ │ ├── templates/ │ ├── static/ │ ├── admin.py │ ├── apps.py │ ├── forms.py │ ├── models.py │ ├── urls.py │ ├── views.py │ └── ... ├── interview_system/ # Django project settings │ ├── settings.py │ ├── urls.py │ └── ... ├── manage.py ├── requirements.txt └── README.md \`\`\` </pre>
+<pre> 
+interview_system/
+│
+├── recruitment/           # Main Django app
+│   ├── migrations/
+│   ├── templates/
+│   ├── static/
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── urls.py
+│   ├── views.py
+│   └── ...
+├── interview_system/      # Django project settings
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+├── manage.py
+├── requirements.txt
+└── README.md
+</pre>
 
 
 ## Contributing
