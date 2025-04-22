@@ -137,3 +137,34 @@
     </div>
 </div>
 {% endblock %}
+
+<!-- Thông tin về lương -->
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Title</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ position.title }}</dd>
+                </div>
+                
+                <!-- Thêm hiển thị Department -->
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Department</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ position.department|default:"Not specified" }}
+                    </dd>
+                </div>
+                
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Salary Range</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ position.salary_range|default:"Not specified" }}
+                    </dd>
+                </div>
+                
+                <!-- Thêm thông tin về loại hình công việc -->
+                <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm font-medium text-gray-500">Employment Type</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ position.get_employment_type_display }}
+                    </dd>
+                </div>
+                
+                <!-- Thông tin về mô tả công việc -->

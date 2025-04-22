@@ -64,7 +64,7 @@ class ApplicationForm(forms.Form):
 class PositionForm(forms.ModelForm):
     class Meta:
         model = Position
-        fields = ['title', 'description', 'requirements', 'salary_range', 'is_active']
+        fields = ['title', 'department', 'salary_range', 'employment_type', 'description', 'requirements', 'is_active']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 5, 'class': 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md'}),
             'requirements': forms.Textarea(attrs={'rows': 5, 'class': 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md'}),

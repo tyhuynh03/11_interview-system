@@ -27,9 +27,10 @@ class Command(BaseCommand):
                 - Knowledge of user authentication and authorization
                 - Understanding of fundamental design principles
                 - Proficient understanding of code versioning tools (Git)
-                - Bachelor's degree in Computer Science or related field
-                ''',
-                'salary_range': '$300 - $400/month'  # Thêm lương
+                - Bachelor's degree in Computer Science or related field                 ''',
+                'salary_range': '$300 - $400/month',
+                'employment_type': 'full_time',
+                'department': 'Engineering'  # Thêm phòng ban
             },
             {
                 'title': 'Frontend Developer (React)',
@@ -52,7 +53,9 @@ class Command(BaseCommand):
                 - Experience with common front-end development tools such as Babel, Webpack, NPM, etc.
                 - Familiarity with RESTful APIs and modern authorization mechanisms
                 ''',
-                'salary_range': '$250 - $350/month'  # Thêm lương
+                'salary_range': '$250 - $350/month',
+                'employment_type': 'full_time',
+                'department': 'Frontend Development'  # Thêm phòng ban
             },
             {
                 'title': 'DevOps Engineer',
@@ -76,7 +79,9 @@ class Command(BaseCommand):
                 - Scripting skills (Python, Bash)
                 - Understanding of networking concepts
                 ''',
-                'salary_range': '$300 - $400/month'  # Thêm lương
+                'salary_range': '$300 - $400/month',
+                'employment_type': 'contract',
+                'department': 'DevOps'  # Thêm phòng ban
             },
             {
                 'title': 'Data Scientist',
@@ -100,7 +105,9 @@ class Command(BaseCommand):
                 - Knowledge of SQL and database systems
                 - Strong problem-solving skills and attention to detail
                 ''',
-                'salary_range': '$350 - $450/month'  # Thêm lương
+                'salary_range': '$350 - $450/month',
+                'employment_type': 'full_time',
+                'department': 'Data Science'  # Thêm phòng ban
             },
             {
                 'title': 'UI/UX Designer',
@@ -123,7 +130,9 @@ class Command(BaseCommand):
                 - Excellent communication and collaboration skills
                 - Bachelor's degree in Design, HCI, or related field
                 ''',
-                'salary_range': '$250 - $350/month'  # Thêm lương
+                'salary_range': '$250 - $350/month',
+                'employment_type': 'part_time',
+                'department': 'Design'  # Thêm phòng ban
             }
         ]
         
@@ -134,7 +143,9 @@ class Command(BaseCommand):
                 defaults={
                     'description': position_data['description'],
                     'requirements': position_data['requirements'],
-                    'salary_range': position_data['salary_range'],  # Thêm lương
+                    'salary_range': position_data['salary_range'],
+                    'employment_type': position_data['employment_type'],
+                    'department': position_data['department'],  # Thêm phòng ban
                     'is_active': True
                 }
             )
@@ -142,8 +153,10 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(self.style.SUCCESS(f'Created position: {position.title}'))
             else:
-                # Cập nhật thông tin lương cho các vị trí đã tồn tại
+                # Cập nhật thông tin cho các vị trí đã tồn tại
                 position.salary_range = position_data['salary_range']
+                position.employment_type = position_data['employment_type']
+                position.department = position_data['department']  # Cập nhật phòng ban
                 position.save()
                 self.stdout.write(self.style.WARNING(f'Updated position: {position.title}'))
         

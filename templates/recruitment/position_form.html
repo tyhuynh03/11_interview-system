@@ -41,6 +41,19 @@
                 {% endif %}
             </div>
             
+            <!-- Thêm trường Department -->
+            <div>
+                <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Department
+                </label>
+                <div class="mt-1">
+                    <input type="text" id="{{ form.department.id_for_label }}" name="{{ form.department.html_name }}" value="{{ form.department.value|default:'' }}" placeholder="e.g. Engineering, Marketing, HR" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                </div>
+                {% if form.department.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.department.errors }}</p>
+                {% endif %}
+            </div>
+            
             <div>
                 <label for="{{ form.salary_range.id_for_label }}" class="block text-sm font-medium text-gray-700">
                     Salary Range
@@ -50,6 +63,25 @@
                 </div>
                 {% if form.salary_range.errors %}
                     <p class="mt-2 text-sm text-red-600">{{ form.salary_range.errors }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Thêm trường Employment Type -->
+            <div>
+                <label for="{{ form.employment_type.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Employment Type
+                </label>
+                <div class="mt-1">
+                    <select id="{{ form.employment_type.id_for_label }}" name="{{ form.employment_type.html_name }}" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        {% for value, text in form.fields.employment_type.choices %}
+                            <option value="{{ value }}" {% if form.employment_type.value == value %}selected{% endif %}>
+                                {{ text }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% if form.employment_type.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.employment_type.errors }}</p>
                 {% endif %}
             </div>
             

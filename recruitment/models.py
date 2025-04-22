@@ -12,12 +12,34 @@ class Candidate(models.Model):
     def __str__(self):
         return self.name
 
+# Thêm vào model Position
+
 class Position(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     requirements = models.TextField()
     salary_range = models.CharField(max_length=100, blank=True, null=True)  # Thêm trường lương
+    department = models.CharField(max_length=100, blank=True, null=True)  # Thêm phòng ban
     is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.title
+    
+    EMPLOYMENT_TYPES = [
+        ('full_time', 'Full-time'),
+        ('part_time', 'Part-time'),
+        ('contract', 'Contract'),
+        ('temporary', 'Temporary'),
+        ('internship', 'Internship'),
+        ('remote', 'Remote'),
+    ]
+    
+    employment_type = models.CharField(
+        max_length=20, 
+        choices=EMPLOYMENT_TYPES, 
+        default='full_time',
+        verbose_name='Employment Type'
+    )
     
     def __str__(self):
         return self.title
