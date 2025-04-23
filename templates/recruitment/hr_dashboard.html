@@ -35,13 +35,13 @@
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
                         <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Pending Applications</dt>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Applications</dt>
                             <dd class="mt-1 text-3xl font-semibold text-gray-900">{{ pending_applications_count }}</dd>
                         </dl>
                     </div>
                     <div class="bg-gray-50 px-4 py-4 sm:px-6">
                         <div class="text-sm">
-                            <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Review applications</a>
+                            <a href="{% url 'recruitment:application_management' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Review applications</a>
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Review</a>
+                                                <a href="{% url 'recruitment:application_detail' application.id %}" class="text-indigo-600 hover:text-indigo-900">Review</a>
                                             </td>
                                         </tr>
                                         {% empty %}
@@ -149,14 +149,41 @@
                     
                     <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                         <div class="flex-1 min-w-0">
-                            <a href="#" class="focus:outline-none">
+                            <a href="{% url 'recruitment:application_management' %}" class="focus:outline-none">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
-                                <p class="text-sm font-medium text-gray-900">Schedule Interview</p>
-                                <p class="text-sm text-gray-500">Set up a new interview</p>
+                                <p class="text-sm font-medium text-gray-900">Manage Applications</p>
+                                <p class="text-sm text-gray-500">Review and update applications</p>
                             </a>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Quick Links -->
+            <div class="mt-8 bg-white shadow rounded-lg p-4">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Links</h2>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'recruitment:position_list' %}" class="text-indigo-600 hover:text-indigo-900">
+                            Manage Positions
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'recruitment:application_management' %}" class="text-indigo-600 hover:text-indigo-900">
+                            Manage Applications
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'recruitment:candidate_list' %}" class="text-indigo-600 hover:text-indigo-900">
+                            Manage Candidates
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'recruitment:interview_list' %}" class="text-indigo-600 hover:text-indigo-900">
+                            Manage Interviews
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

@@ -96,3 +96,23 @@ class UserProfile(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.get_user_type_display()}"
+
+
+# Thêm model này vào file models.py hiện có
+
+class ApplicationStatusHistory(models.Model):
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='status_history')
+    previous_status = models.CharField(max_length=20, choices=Application.STATUS_CHOICES, null=True, blank=True)
+    new_status = models.CharField(max_length=20, choices=Application.STATUS_CHOICES)
+    notes = models.TextField(blank=True, null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.application.candidate.name} - {self.new_status} - {self.created_at.strftime('%Y-%m-%d')}"
+    
+    def get_new_status_display(self):
+        return dict(Application.STATUS_CHOICES).get(self.new_status, self.new_status)

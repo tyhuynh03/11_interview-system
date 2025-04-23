@@ -32,4 +32,10 @@ urlpatterns = [
     path('staff/login/', views.staff_login, name='staff_login'),
     path('hr/dashboard/', views.hr_dashboard, name='hr_dashboard'),
     path('interviewer/dashboard/', views.interviewer_dashboard, name='interviewer_dashboard'),
+    # Thêm các URL này vào file urls.py hiện có
+    
+    path('applications/', views.application_management, name='application_management'),
+    path('applications/<int:pk>/', views.application_detail, name='application_detail'),
+    path('applications/<int:pk>/update-status/', views.update_application_status, name='update_application_status'),
+    path('applications/export/', views.export_applications, name='export_applications'),
 ]

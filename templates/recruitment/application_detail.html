@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Details - Recruitment System{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <a href="{% url 'recruitment:application_management' %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-900">
+            <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Back to applications
+        </a>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-indigo-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-2xl leading-6 font-medium text-gray-900">Application Details</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                        Application for {{ application.position.title }} by {{ application.candidate.name }}
+                    </p>
+                </div>
+                <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full 
+                    {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                    {% elif application.status == 'reviewing' %}bg-blue-100 text-blue-800
+                    {% elif application.status == 'interview' %}bg-purple-100 text-purple-800
+                    {% elif application.status == 'rejected' %}bg-red-100 text-red-800
+                    {% elif application.status == 'accepted' %}bg-green-100 text-green-800
+                    {% endif %}">
+                    {{ application.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Position</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.position.title }} ({{ application.position.department }})
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Candidate</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.name }}
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.email }}
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.phone }}
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Applied on</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.created_at|date:"F d, Y" }} at {{ application.created_at|time:"H:i" }}
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Cover Letter</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <div class="prose max-w-none">
+                            {{ application.cover_letter|linebreaks }}
+                        </div>
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Resume</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <div class="flex space-x-3">
+                            <a href="{{ application.resume.url }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" download>
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                Download Resume
+                            </a>
+                            
+                            <a href="{{ application.resume.url }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" target="_blank">
+                                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View Resume in New Tab
+                            </a>
+                        </div>
+                    </dd>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Position</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.position.title }} ({{ application.position.department }})
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Candidate</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.name }}
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.email }}
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.candidate.phone }}
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Applied on</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {{ application.created_at|date:"F d, Y" }} at {{ application.created_at|time:"H:i" }}
+                    </dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Cover Letter</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <div class="prose max-w-none">
+                            {{ application.cover_letter|linebreaks }}
+                        </div>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Status Update Section -->
+    <div class="mt-10 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Update Application Status
+            </h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>Change the status of this application and add optional notes.</p>
+            </div>
+            <form method="post" action="{% url 'recruitment:update_application_status' application.id %}" class="mt-5">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-3">
+                        <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="status" name="status" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            {% for status_value, status_label in status_choices %}
+                                <option value="{{ status_value }}" {% if application.status == status_value %}selected{% endif %}>{{ status_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="sm:col-span-6">
+                        <label for="notes" class="block text-sm font-medium text-gray-700">Notes (Optional)</label>
+                        <textarea id="notes" name="notes" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                    </div>
+                </div>
+                <div class="mt-5">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Update Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interview Scheduling Section (if status is 'interview') -->
+    {% if application.status == 'interview' %}
+    <div class="mt-10 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Schedule Interview
+            </h3>
+            <div class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>Schedule an interview with this candidate.</p>
+            </div>
+            <div class="mt-5">
+                <a href="{% url 'recruitment:schedule_interview' application.id %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Schedule Interview
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Application History -->
+    <div class="mt-10 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6 bg-indigo-50">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Application History</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Status changes and notes</p>
+        </div>
+        <div class="border-t border-gray-200">
+            {% if application_history %}
+                <ul class="divide-y divide-gray-200">
+                    {% for history in application_history %}
+                    <li class="px-4 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <span class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                        <svg class="h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        Status changed to <span class="font-semibold">{{ history.get_new_status_display }}</span>
+                                    </p>
+                                    {% if history.notes %}
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ history.notes }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-shrink-0">
+                                <p class="text-sm text-gray-500">
+                                    {{ history.created_at|date:"M d, Y" }} at {{ history.created_at|time:"H:i" }}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    by {{ history.updated_by.get_full_name|default:history.updated_by.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <div class="px-4 py-5 sm:px-6 text-center">
+                    <p class="text-gray-500">No history available for this application.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const previewButton = document.getElementById('previewButton');
+        const closePreviewButton = document.getElementById('closePreviewButton');
+        const resumePreview = document.getElementById('resumePreview');
+        
+        previewButton.addEventListener('click', function() {
+            resumePreview.classList.remove('hidden');
+        });
+        
+        closePreviewButton.addEventListener('click', function() {
+            resumePreview.classList.add('hidden');
+        });
+    });
+</script>
+{% endblock %}

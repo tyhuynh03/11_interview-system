@@ -8,6 +8,12 @@ from .forms import CandidateForm, CandidateRegistrationForm, ApplicationForm, Po
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+import csv
+from datetime import datetime
+from .models import Application, ApplicationStatusHistory, Position
 
 def home(request):
     upcoming_interviews = Interview.objects.filter(
@@ -167,7 +173,63 @@ def public_position_detail(request, pk):
 
 def public_position_list(request):
     positions = Position.objects.filter(is_active=True)
-    return render(request, 'recruitment/public_position_list.html', {'positions': positions})
+    
+    # Search functionality
+    search_query = request.GET.get('search', '')
+    if search_query:
+        positions = positions.filter(
+            Q(title__icontains=search_query) | 
+            Q(description__icontains=search_query) |
+            Q(requirements__icontains=search_query)
+        )
+    
+    # Department filter
+    department = request.GET.get('department', '')
+    if department:
+        positions = positions.filter(department=department)
+    
+    # Employment type filter
+    employment_type = request.GET.get('employment_type', '')
+    if employment_type:
+        positions = positions.filter(employment_type=employment_type)
+    
+    # Sorting
+    sort_by = request.GET.get('sort', 'title')
+    if sort_by == 'title':
+        positions = positions.order_by('title')
+    elif sort_by == 'department':
+        positions = positions.order_by('department', 'title')
+    elif sort_by == 'newest':
+        positions = positions.order_by('-id')  # Assuming newer positions have higher IDs
+    
+    # Pagination
+    paginator = Paginator(positions, 9)  # Show 9 positions per page
+    page = request.GET.get('page')
+    try:
+        positions = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        positions = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, deliver last page of results.
+        positions = paginator.page(paginator.num_pages)
+    
+    # Get unique departments for filter dropdown
+    departments = Position.objects.filter(is_active=True).exclude(
+        department__isnull=True).exclude(department='').values_list(
+        'department', flat=True).distinct()
+    
+    # Get employment types for filter dropdown
+    employment_types = Position.EMPLOYMENT_TYPES
+    
+    context = {
+        'positions': positions,
+        'departments': departments,
+        'employment_types': employment_types,
+        'current_sort': sort_by,
+    }
+    
+    return render(request, 'recruitment/public_position_list.html', context)
 
 
 def is_hr_staff(user):
@@ -291,3 +353,161 @@ def position_detail(request, pk):
         'position': position,
         'applications': applications,
     })
+
+
+# Thêm các import cần thiết
+from django.db.models import Q
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+import csv
+from datetime import datetime
+from .models import Application, ApplicationStatusHistory, Position
+
+@login_required
+@user_passes_test(is_hr_staff)
+def application_management(request):
+    """View for HR staff to manage job applications"""
+    applications = Application.objects.all().order_by('-created_at')
+    
+    # Get all active positions for filter dropdown
+    positions = Position.objects.filter(is_active=True)
+    
+    # Filter by position
+    selected_position = request.GET.get('position', '')
+    if selected_position:
+        applications = applications.filter(position_id=selected_position)
+    
+    # Filter by status
+    selected_status = request.GET.get('status', '')
+    if selected_status:
+        applications = applications.filter(status=selected_status)
+    
+    # Search by candidate name or email
+    search_query = request.GET.get('search', '')
+    if search_query:
+        applications = applications.filter(
+            Q(candidate__name__icontains=search_query) | 
+            Q(candidate__email__icontains=search_query)
+        )
+    
+    # Pagination
+    paginator = Paginator(applications, 10)  # Show 10 applications per page
+    page = request.GET.get('page')
+    try:
+        applications = paginator.page(page)
+    except PageNotAnInteger:
+        applications = paginator.page(1)
+    except EmptyPage:
+        applications = paginator.page(paginator.num_pages)
+    
+    context = {
+        'applications': applications,
+        'positions': positions,
+        'status_choices': Application.STATUS_CHOICES,
+        'selected_position': selected_position,
+        'selected_status': selected_status,
+        'search_query': search_query,
+    }
+    
+    return render(request, 'recruitment/application_management.html', context)
+
+@login_required
+@user_passes_test(is_hr_staff)
+def application_detail(request, pk):
+    """View for HR staff to see details of a job application"""
+    application = get_object_or_404(Application, pk=pk)
+    application_history = application.status_history.all()
+    
+    context = {
+        'application': application,
+        'application_history': application_history,
+        'status_choices': Application.STATUS_CHOICES,
+    }
+    
+    return render(request, 'recruitment/application_detail.html', context)
+
+@login_required
+@user_passes_test(is_hr_staff)
+def update_application_status(request, pk):
+    """View for HR staff to update application status"""
+    application = get_object_or_404(Application, pk=pk)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        notes = request.POST.get('notes', '')
+        
+        if new_status and new_status != application.status:
+            # Create history record
+            ApplicationStatusHistory.objects.create(
+                application=application,
+                previous_status=application.status,
+                new_status=new_status,
+                notes=notes,
+                updated_by=request.user
+            )
+            
+            # Update application status
+            application.status = new_status
+            application.save()
+            
+            messages.success(request, f"Application status updated to {application.get_status_display()}")
+        
+        # Redirect back to the referring page
+        referer = request.META.get('HTTP_REFERER')
+        if referer and '/applications/' in referer:
+            return redirect('recruitment:application_detail', pk=application.id)
+        else:
+            return redirect('recruitment:application_management')
+    
+    # If not POST, redirect to application detail
+    return redirect('recruitment:application_detail', pk=application.id)
+
+@login_required
+@user_passes_test(is_hr_staff)
+def export_applications(request):
+    """Export applications to CSV"""
+    # Get filtered applications based on request parameters
+    applications = Application.objects.all().order_by('-created_at')
+    
+    # Apply the same filters as in application_management view
+    position = request.GET.get('position', '')
+    if position:
+        applications = applications.filter(position_id=position)
+    
+    status = request.GET.get('status', '')
+    if status:
+        applications = applications.filter(status=status)
+    
+    search = request.GET.get('search', '')
+    if search:
+        applications = applications.filter(
+            Q(candidate__name__icontains=search) |
+            Q(candidate__email__icontains=search)
+        )
+    
+    # Create the HttpResponse object with CSV header
+    response = HttpResponse(content_type='text/csv')
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    response['Content-Disposition'] = f'attachment; filename="applications_export_{timestamp}.csv"'
+    
+    # Create CSV writer
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Candidate Name', 'Email', 'Phone', 'Position', 'Department', 'Status', 'Applied On'])
+    
+    # Add application data
+    for app in applications:
+        writer.writerow([
+            app.id,
+            app.candidate.name,
+            app.candidate.email,
+            app.candidate.phone,
+            app.position.title,
+            app.position.department,
+            app.get_status_display(),
+            app.created_at.strftime('%Y-%m-%d %H:%M')
+        ])
+    
+    return response

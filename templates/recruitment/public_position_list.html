@@ -3,39 +3,218 @@
 {% block title %}Open Positions - Recruitment System{% endblock %}
 
 {% block content %}
-<div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 bg-gradient-to-r from-indigo-500 to-indigo-600">
-        <h1 class="text-2xl font-bold text-white">Open Positions</h1>
-        <p class="mt-1 max-w-2xl text-sm text-indigo-100">Explore our current job openings</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900">Open Positions</h1>
+        <p class="mt-4 text-lg text-gray-500">Join our team and help us build amazing products</p>
     </div>
     
-    <div class="border-t border-gray-200">
-        {% if positions %}
-            <ul class="divide-y divide-gray-200">
-                {% for position in positions %}
-                    <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">{{ position.title }}</h3>
-                                <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ position.description|truncatewords:30 }}</p>
-                                {% if position.salary_range %}
-                                <p class="mt-1 text-sm font-medium text-green-600">{{ position.salary_range }}</p>
-                                {% endif %}
+    <!-- Search and Filter Section -->
+    <div class="bg-white shadow rounded-lg mb-8 p-6">
+        <form method="get" class="space-y-6">
+            <!-- Search input - Completely redesigned -->
+            <div class="mb-4">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search Positions</label>
+                <div class="relative rounded-md shadow-lg">
+                    <input type="text" name="search" id="search" value="{{ request.GET.search }}" 
+                        class="block w-full pr-10 pl-12 py-3 text-base border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
+                        placeholder="Search by title, keywords, or skills">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg class="h-6 w-6 text-indigo-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Department filter -->
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                    <select id="department" name="department" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept }}" {% if request.GET.department == dept %}selected{% endif %}>{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Employment Type filter -->
+                <div>
+                    <label for="employment_type" class="block text-sm font-medium text-gray-700">Employment Type</label>
+                    <select id="employment_type" name="employment_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option value="">All Types</option>
+                        {% for value, label in employment_types %}
+                            <option value="{{ value }}" {% if request.GET.employment_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Filter button -->
+                <div class="flex items-end">
+                    <button type="submit" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+                        </svg>
+                        Filter Positions
+                    </button>
+                </div>
+            </div>
+            
+            {% if request.GET.search or request.GET.department or request.GET.employment_type %}
+                <div class="flex justify-end">
+                    <a href="{% url 'recruitment:public_position_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="mr-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Clear Filters
+                    </a>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- Position Cards -->
+    {% if positions %}
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {% for position in positions %}
+                <div class="bg-white overflow-hidden shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                                <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
                             </div>
-                            <div>
-                                <a href="{% url 'recruitment:public_position_detail' position.id %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    View Details
-                                </a>
+                            <div class="ml-5 w-0 flex-1">
+                                <dl>
+                                    <dt class="text-sm font-medium text-gray-500 truncate">
+                                        {{ position.department|default:"General" }}
+                                    </dt>
+                                    <dd>
+                                        <div class="text-lg font-medium text-gray-900">
+                                            {{ position.title }}
+                                        </div>
+                                    </dd>
+                                </dl>
                             </div>
                         </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="px-4 py-5 sm:px-6 text-center">
-                <p class="text-gray-500">No open positions available at the moment.</p>
-            </div>
-        {% endif %}
-    </div>
+                        
+                        <div class="mt-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                {{ position.get_employment_type_display }}
+                            </span>
+                            {% if position.salary_range %}
+                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    {{ position.salary_range }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-4 text-sm text-gray-500 line-clamp-3">
+                            {{ position.description|truncatechars:150 }}
+                        </div>
+                        
+                        <div class="mt-5">
+                            <a href="{% url 'recruitment:public_position_detail' pk=position.pk %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-12 bg-white shadow rounded-lg">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No positions found</h3>
+            <p class="mt-1 text-sm text-gray-500">
+                {% if request.GET.search or request.GET.department or request.GET.employment_type %}
+                    No positions match your current filters.
+                {% else %}
+                    There are no open positions at the moment. Please check back later.
+                {% endif %}
+            </p>
+            {% if request.GET.search or request.GET.department or request.GET.employment_type %}
+                <div class="mt-6">
+                    <a href="{% url 'recruitment:public_position_list' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Clear Filters
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
+
+<!-- Thêm phần sắp xếp sau phần tìm kiếm và bộ lọc -->
+<div class="flex justify-between items-center mb-6">
+    <div class="text-sm text-gray-500">
+        Showing {{ positions.start_index }} to {{ positions.end_index }} of {{ paginator.count }} positions
+    </div>
+    <div class="flex items-center">
+        <span class="mr-2 text-sm text-gray-700">Sort by:</span>
+        <select id="sort-select" class="text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" 
+                onchange="window.location.href='?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.department %}department={{ request.GET.department }}&{% endif %}{% if request.GET.employment_type %}employment_type={{ request.GET.employment_type }}&{% endif %}sort=' + this.value">
+            <option value="title" {% if current_sort == 'title' %}selected{% endif %}>Title (A-Z)</option>
+            <option value="department" {% if current_sort == 'department' %}selected{% endif %}>Department</option>
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+        </select>
+    </div>
+</div>
+
+<!-- Sau phần Position Cards, thêm phân trang -->
+{% if positions.has_other_pages %}
+<div class="mt-8 flex justify-center">
+    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+        {% if positions.has_previous %}
+            <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.department %}department={{ request.GET.department }}&{% endif %}{% if request.GET.employment_type %}employment_type={{ request.GET.employment_type }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ positions.previous_page_number }}" 
+               class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        {% else %}
+            <span class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+            </span>
+        {% endif %}
+        
+        {% for i in positions.paginator.page_range %}
+            {% if positions.number == i %}
+                <span class="relative inline-flex items-center px-4 py-2 border border-indigo-500 bg-indigo-50 text-sm font-medium text-indigo-600">
+                    {{ i }}
+                </span>
+            {% else %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.department %}department={{ request.GET.department }}&{% endif %}{% if request.GET.employment_type %}employment_type={{ request.GET.employment_type }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ i }}" 
+                   class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    {{ i }}
+                </a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if positions.has_next %}
+            <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.department %}department={{ request.GET.department }}&{% endif %}{% if request.GET.employment_type %}employment_type={{ request.GET.employment_type }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ positions.next_page_number }}" 
+               class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </a>
+        {% else %}
+            <span class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+            </span>
+        {% endif %}
+    </nav>
+</div>
+{% endif %}
