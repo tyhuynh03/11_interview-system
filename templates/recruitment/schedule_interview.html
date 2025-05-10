@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Schedule Interview - Recruitment System{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <h1 class="text-2xl font-bold text-white">Schedule New Interview</h1>
+            <p class="mt-1 text-sm text-indigo-100">Fill in the details to schedule a new interview</p>
+        </div>
+
+        <!-- Form -->
+        <div class="p-6 space-y-6">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Candidate -->
+                <div>
+                    <label for="{{ form.candidate.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Candidate
+                    </label>
+                    <div class="mt-1">
+                        {{ form.candidate }}
+                    </div>
+                    {% if form.candidate.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.candidate.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Position -->
+                <div>
+                    <label for="{{ form.position.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Position
+                    </label>
+                    <div class="mt-1">
+                        {{ form.position }}
+                    </div>
+                    {% if form.position.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.position.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Interviewer -->
+                <div>
+                    <label for="{{ form.interviewer.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 mb-1">
+                        Interviewer
+                    </label>
+                    <div class="mt-1">
+                        {{ form.interviewer }}
+                    </div>
+                    {% if form.interviewer.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.interviewer.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Scheduled Date -->
+                <div>
+                    <label for="{{ form.scheduled_date.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 mb-1">
+                        Scheduled Date & Time
+                    </label>
+                    <div class="mt-1">
+                        {{ form.scheduled_date }}
+                    </div>
+                    {% if form.scheduled_date.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.scheduled_date.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Duration -->
+                <div>
+                    <label for="{{ form.duration.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Duration (minutes)
+                    </label>
+                    <div class="mt-1">
+                        {{ form.duration }}
+                    </div>
+                    {% if form.duration.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.duration.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Interview Type -->
+                <div>
+                    <label for="{{ form.interview_type.id_for_label }}"
+                        class="block text-sm font-medium text-gray-700 mb-1">
+                        Interview Type
+                    </label>
+                    <div class="mt-1">
+                        {{ form.interview_type }}
+                    </div>
+                    {% if form.interview_type.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.interview_type.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Notes
+                    </label>
+                    <div class="mt-1">
+                        {{ form.notes }}
+                    </div>
+                    {% if form.notes.errors %}
+                    <p class="mt-2 text-sm text-red-600">
+                        {{ form.notes.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex justify-end space-x-3 pt-4">
+                    <a href="{% url 'recruitment:interview_calendar' %}"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Schedule Interview
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

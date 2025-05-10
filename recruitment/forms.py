@@ -69,3 +69,51 @@ class PositionForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 5, 'class': 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md'}),
             'requirements': forms.Textarea(attrs={'rows': 5, 'class': 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md'}),
         }
+
+class InterviewScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Interview
+        fields = ['candidate', 'position', 'interviewer', 'scheduled_date', 'duration', 'interview_type', 'notes']
+        widgets = {
+            'candidate': forms.Select(attrs={
+                'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'position': forms.Select(attrs={
+                'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'interviewer': forms.Select(attrs={
+                'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'scheduled_date': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'mt-1 block w-full border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'duration': forms.NumberInput(attrs={
+                'min': '15',
+                'max': '180',
+                'step': '15',
+                'class': 'mt-1 block w-full border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'interview_type': forms.Select(attrs={
+                'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+            'notes': forms.Textarea(attrs={
+                'rows': 4,
+                'class': 'mt-1 block w-full border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Lọc danh sách ứng viên chỉ hiển thị những người đã nộp đơn
+        self.fields['candidate'].queryset = Candidate.objects.filter(
+            applications__status__in=['pending', 'shortlisted']
+        ).distinct()
+        
+        # Lọc danh sách vị trí chỉ hiển thị những vị trí đang mở
+        self.fields['position'].queryset = Position.objects.filter(is_active=True)
+        
+        # Lọc danh sách người phỏng vấn chỉ hiển thị HR và Interviewer
+        self.fields['interviewer'].queryset = User.objects.filter(
+            profile__user_type__in=['hr', 'interviewer', 'admin']
+        )

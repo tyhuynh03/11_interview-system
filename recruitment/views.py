@@ -4,16 +4,17 @@ from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.utils import timezone
 from .models import Candidate, Position, Interview, Application
-from .forms import CandidateForm, CandidateRegistrationForm, ApplicationForm, PositionForm
+from .forms import CandidateForm, CandidateRegistrationForm, ApplicationForm, PositionForm, InterviewScheduleForm
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from .models import Application, ApplicationStatusHistory, Position
+from django.urls import reverse
 
 def home(request):
     upcoming_interviews = Interview.objects.filter(
@@ -512,3 +513,77 @@ def export_applications(request):
         ])
     
     return response
+
+@login_required
+def interview_calendar(request):
+    """View for displaying interview calendar"""
+    return render(request, 'recruitment/interview_calendar.html')
+
+@login_required
+def get_interview_events(request):
+    """API endpoint to get interview events for calendar"""
+    start = request.GET.get('start', None)
+    end = request.GET.get('end', None)
+    
+    if start and end:
+        start_date = datetime.fromisoformat(start.replace('Z', '+00:00'))
+        end_date = datetime.fromisoformat(end.replace('Z', '+00:00'))
+        
+        interviews = Interview.objects.filter(
+            scheduled_date__gte=start_date,
+            scheduled_date__lte=end_date
+        )
+        
+        events = []
+        for interview in interviews:
+            # Xác định màu dựa trên trạng thái
+            color = {
+                'scheduled': '#3498db',  # Xanh dương
+                'completed': '#2ecc71',  # Xanh lá
+                'cancelled': '#e74c3c',  # Đỏ
+                'rescheduled': '#f1c40f'  # Vàng
+            }.get(interview.status, '#95a5a6')  # Xám mặc định
+            
+            events.append({
+                'id': interview.id,
+                'title': f"Interview: {interview.candidate.name}",
+                'start': interview.scheduled_date.isoformat(),
+                'end': (interview.scheduled_date + timedelta(hours=1)).isoformat(),
+                'color': color,
+                'url': reverse('recruitment:interview_detail', args=[interview.id]),
+                'extendedProps': {
+                    'candidate': interview.candidate.name,
+                    'position': interview.position.title,
+                    'status': interview.status,
+                    'interviewer': interview.interviewer.get_full_name() if interview.interviewer else 'Not assigned'
+                }
+            })
+        
+        return JsonResponse(events, safe=False)
+    
+    return JsonResponse([], safe=False)
+
+@login_required
+@user_passes_test(is_hr_staff)
+def schedule_interview(request):
+    """View for scheduling a new interview"""
+    if request.method == 'POST':
+        form = InterviewScheduleForm(request.POST)
+        if form.is_valid():
+            interview = form.save(commit=False)
+            interview.status = 'scheduled'
+            interview.created_by = request.user
+            interview.save()
+            
+            # Gửi email thông báo cho ứng viên và người phỏng vấn
+            # TODO: Implement email notification
+            
+            messages.success(request, f"Interview scheduled successfully for {interview.candidate.name}")
+            return redirect('recruitment:interview_calendar')
+    else:
+        form = InterviewScheduleForm()
+    
+    return render(request, 'recruitment/schedule_interview.html', {
+        'form': form,
+        'title': 'Schedule Interview'
+    })

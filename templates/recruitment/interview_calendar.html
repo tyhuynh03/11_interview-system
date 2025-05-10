@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Interview Calendar - Recruitment System{% endblock %}
+
+{% block extra_css %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<style>
+    .fc-event {
+        cursor: pointer;
+    }
+
+    .fc-event-title {
+        font-weight: bold;
+    }
+
+    .calendar-container {
+        margin: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2d3748;
+    }
+
+    .calendar-filters {
+        display: flex;
+        gap: 10px;
+    }
+
+    .status-filter {
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        cursor: pointer;
+    }
+
+    .status-filter.active {
+        background: #4299e1;
+        color: white;
+        border-color: #4299e1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calendar-container">
+    <div class="calendar-header">
+        <h1 class="calendar-title">Interview Calendar</h1>
+        <div class="flex items-center space-x-4">
+            <div class="calendar-filters">
+                <button class="status-filter active" data-status="all">All</button>
+                <button class="status-filter" data-status="scheduled">Scheduled</button>
+                <button class="status-filter" data-status="completed">Completed</button>
+                <button class="status-filter" data-status="cancelled">Cancelled</button>
+                <button class="status-filter" data-status="rescheduled">Rescheduled</button>
+            </div>
+            <a href="{% url 'recruitment:schedule_interview' %}"
+                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Schedule Interview
+            </a>
+        </div>
+    </div>
+    <div id="calendar"></div>
+</div>
+
+<!-- Event Details Modal -->
+<div id="eventModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900" id="modalTitle"></h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500" id="modalCandidate"></p>
+                <p class="text-sm text-gray-500" id="modalPosition"></p>
+                <p class="text-sm text-gray-500" id="modalInterviewer"></p>
+                <p class="text-sm text-gray-500" id="modalStatus"></p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="closeModal"
+                    class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: {
+                url: "{% url 'recruitment:get_interview_events' %}",
+                failure: function () {
+                    alert('There was an error while fetching events!');
+                }
+            },
+            eventClick: function (info) {
+                var modal = document.getElementById('eventModal');
+                var title = document.getElementById('modalTitle');
+                var candidate = document.getElementById('modalCandidate');
+                var position = document.getElementById('modalPosition');
+                var interviewer = document.getElementById('modalInterviewer');
+                var status = document.getElementById('modalStatus');
+
+                title.textContent = info.event.title;
+                candidate.textContent = 'Candidate: ' + info.event.extendedProps.candidate;
+                position.textContent = 'Position: ' + info.event.extendedProps.position;
+                interviewer.textContent = 'Interviewer: ' + info.event.extendedProps.interviewer;
+                status.textContent = 'Status: ' + info.event.extendedProps.status;
+
+                modal.classList.remove('hidden');
+            }
+        });
+        calendar.render();
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', function () {
+            document.getElementById('eventModal').classList.add('hidden');
+        });
+
+        // Status filters
+        document.querySelectorAll('.status-filter').forEach(button => {
+            button.addEventListener('click', function () {
+                // Update active state
+                document.querySelectorAll('.status-filter').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+
+                // Filter events
+                var status = this.dataset.status;
+                calendar.getEvents().forEach(event => {
+                    if (status === 'all' || event.extendedProps.status === status) {
+                        event.setProp('display', 'auto');
+                    } else {
+                        event.setProp('display', 'none');
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

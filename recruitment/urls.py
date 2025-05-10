@@ -32,7 +32,11 @@ urlpatterns = [
     path('staff/login/', views.staff_login, name='staff_login'),
     path('hr/dashboard/', views.hr_dashboard, name='hr_dashboard'),
     path('interviewer/dashboard/', views.interviewer_dashboard, name='interviewer_dashboard'),
-    # Thêm các URL này vào file urls.py hiện có
+    
+    # Calendar URLs
+    path('calendar/', views.interview_calendar, name='interview_calendar'),
+    path('calendar/events/', views.get_interview_events, name='get_interview_events'),
+    path('calendar/schedule/', views.schedule_interview, name='schedule_interview'),
     
     path('applications/', views.application_management, name='application_management'),
     path('applications/<int:pk>/', views.application_detail, name='application_detail'),

@@ -71,10 +71,21 @@ class Interview(models.Model):
         ('cancelled', 'Cancelled'),
     ]
     
+    INTERVIEW_TYPES = [
+        ('phone', 'Phone Interview'),
+        ('video', 'Video Interview'),
+        ('technical', 'Technical Interview'),
+        ('onsite', 'On-site Interview'),
+        ('assessment', 'Assessment'),
+    ]
+    
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     position = models.ForeignKey(Position, on_delete=models.CASCADE)
     interviewer = models.ForeignKey(User, on_delete=models.CASCADE)
     scheduled_date = models.DateTimeField()
+    duration = models.IntegerField(help_text='Duration in minutes', default=60)
+    interview_type = models.CharField(max_length=20, choices=INTERVIEW_TYPES, default='onsite')
+    notes = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
     feedback = models.TextField(blank=True, null=True)
     rating = models.IntegerField(null=True, blank=True)
