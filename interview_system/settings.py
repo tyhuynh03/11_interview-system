@@ -128,12 +128,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Hoặc chuyển hướng đến trang chủ
+# Cấu hình chuyển hướng sau khi đăng nhập
 LOGIN_REDIRECT_URL = 'recruitment:home'
+LOGOUT_REDIRECT_URL = '/'
 
 # Hoặc chuyển hướng đến danh sách vị trí công việc
 # LOGIN_REDIRECT_URL = 'recruitment:public_position_list'
-
-# Cấu hình chuyển hướng sau khi đăng nhập
-LOGIN_REDIRECT_URL = '/positions/'
-LOGOUT_REDIRECT_URL = '/'
