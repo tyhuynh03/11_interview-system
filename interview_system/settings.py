@@ -133,3 +133,7 @@ LOGIN_REDIRECT_URL = 'recruitment:home'
 
 # Hoặc chuyển hướng đến danh sách vị trí công việc
 # LOGIN_REDIRECT_URL = 'recruitment:public_position_list'
+
+# Cấu hình chuyển hướng sau khi đăng nhập
+LOGIN_REDIRECT_URL = '/positions/'
+LOGOUT_REDIRECT_URL = '/'

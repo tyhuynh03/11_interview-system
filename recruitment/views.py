@@ -115,9 +115,10 @@ def register(request):
         form = CandidateRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # Đăng nhập người dùng sau khi đăng ký
             login(request, user)
-            messages.success(request, "Registration successful. You can now apply for positions.")
-            return redirect('recruitment:position_list')
+            # Chuyển hướng đến trang danh sách vị trí công việc thay vì trang admin
+            return redirect('recruitment:public_position_list')
     else:
         form = CandidateRegistrationForm()
     return render(request, 'recruitment/register.html', {'form': form})
