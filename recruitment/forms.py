@@ -73,7 +73,7 @@ class PositionForm(forms.ModelForm):
 class InterviewScheduleForm(forms.ModelForm):
     class Meta:
         model = Interview
-        fields = ['candidate', 'position', 'interviewer', 'scheduled_date', 'duration', 'interview_type', 'notes']
+        fields = ['candidate', 'position', 'interviewer', 'scheduled_date', 'duration', 'interview_type', 'location', 'notes']
         widgets = {
             'candidate': forms.Select(attrs={
                 'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
@@ -97,6 +97,10 @@ class InterviewScheduleForm(forms.ModelForm):
             'interview_type': forms.Select(attrs={
                 'class': 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
             }),
+            'location': forms.TextInput(attrs={
+                'class': 'mt-1 block w-full border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md',
+                'placeholder': 'Nhập địa điểm phỏng vấn'
+            }),
             'notes': forms.Textarea(attrs={
                 'rows': 4,
                 'class': 'mt-1 block w-full border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md'
@@ -105,10 +109,8 @@ class InterviewScheduleForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Lọc danh sách ứng viên chỉ hiển thị những người đã nộp đơn
-        self.fields['candidate'].queryset = Candidate.objects.filter(
-            applications__status__in=['pending', 'shortlisted']
-        ).distinct()
+        # Hiển thị tất cả ứng viên
+        self.fields['candidate'].queryset = Candidate.objects.all()
         
         # Lọc danh sách vị trí chỉ hiển thị những vị trí đang mở
         self.fields['position'].queryset = Position.objects.filter(is_active=True)

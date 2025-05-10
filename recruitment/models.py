@@ -85,6 +85,7 @@ class Interview(models.Model):
     scheduled_date = models.DateTimeField()
     duration = models.IntegerField(help_text='Duration in minutes', default=60)
     interview_type = models.CharField(max_length=20, choices=INTERVIEW_TYPES, default='onsite')
+    location = models.CharField(max_length=200, blank=True, null=True, help_text='Địa điểm phỏng vấn')
     notes = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='scheduled')
     feedback = models.TextField(blank=True, null=True)

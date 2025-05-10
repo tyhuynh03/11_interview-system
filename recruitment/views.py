@@ -570,20 +570,30 @@ def schedule_interview(request):
     if request.method == 'POST':
         form = InterviewScheduleForm(request.POST)
         if form.is_valid():
-            interview = form.save(commit=False)
-            interview.status = 'scheduled'
-            interview.created_by = request.user
-            interview.save()
-            
-            # Gửi email thông báo cho ứng viên và người phỏng vấn
-            # TODO: Implement email notification
-            
-            messages.success(request, f"Interview scheduled successfully for {interview.candidate.name}")
+            interview = form.save()
+            # Gửi email thông báo
+            try:
+                from .utils import send_interview_notification
+                send_interview_notification(interview)
+                messages.success(request, 'Lịch phỏng vấn đã được tạo và email thông báo đã được gửi.')
+            except Exception as e:
+                messages.warning(request, f'Lịch phỏng vấn đã được tạo nhưng không thể gửi email: {str(e)}')
             return redirect('recruitment:interview_calendar')
     else:
         form = InterviewScheduleForm()
     
-    return render(request, 'recruitment/schedule_interview.html', {
-        'form': form,
-        'title': 'Schedule Interview'
-    })
+    return render(request, 'recruitment/schedule_interview.html', {'form': form})
+
+def confirm_interview(request, interview_id):
+    """View để gửi lại email xác nhận tham gia phỏng vấn"""
+    interview = get_object_or_404(Interview, id=interview_id)
+    
+    try:
+        from .utils import send_interview_confirmation
+        send_interview_confirmation(interview)
+        messages.success(request, 'Đã gửi lại email xác nhận tham gia phỏng vấn thành công.')
+    except Exception as e:
+        messages.error(request, f'Không thể gửi email xác nhận: {str(e)}')
+    
+    # Chuyển hướng về trang chủ
+    return redirect('recruitment:home')

@@ -134,3 +134,16 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Hoặc chuyển hướng đến danh sách vị trí công việc
 # LOGIN_REDIRECT_URL = 'recruitment:public_position_list'
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tyhuynh172003@gmail.com'  # Thay thế bằng email Gmail của bạn
+EMAIL_HOST_PASSWORD = 'xhfs qrjk lwub nyup'  # Thay thế bằng mật khẩu ứng dụng 16 ký tự bạn vừa tạo
+DEFAULT_FROM_EMAIL = 'tyhuynh172003@gmail.com'  # Thay thế bằng email Gmail của bạn
+
+# Site Configuration
+SITE_URL = 'http://localhost:8000'  # Thay thế bằng URL thực của website của bạn
+COMPANY_NAME = 'Công Ty TNHH TỶ HUỲNH'  # Thay thế bằng tên công ty của bạn

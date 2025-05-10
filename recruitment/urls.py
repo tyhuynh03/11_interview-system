@@ -37,6 +37,7 @@ urlpatterns = [
     path('calendar/', views.interview_calendar, name='interview_calendar'),
     path('calendar/events/', views.get_interview_events, name='get_interview_events'),
     path('calendar/schedule/', views.schedule_interview, name='schedule_interview'),
+    path('interview/confirm/<int:interview_id>/', views.confirm_interview, name='confirm_interview'),
     
     path('applications/', views.application_management, name='application_management'),
     path('applications/<int:pk>/', views.application_detail, name='application_detail'),
