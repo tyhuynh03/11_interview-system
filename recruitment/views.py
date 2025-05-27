@@ -597,3 +597,62 @@ def confirm_interview(request, interview_id):
     
     # Chuyển hướng về trang chủ
     return redirect('recruitment:home')
+
+@login_required
+@user_passes_test(is_interviewer)
+def interview_detail(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    return render(request, 'recruitment/interview_detail.html', {'interview': interview})
+
+@login_required
+@user_passes_test(is_interviewer)
+def interview_edit(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        form = InterviewScheduleForm(request.POST, instance=interview)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Interview updated successfully.')
+            return redirect('recruitment:interview_list')
+    else:
+        form = InterviewScheduleForm(instance=interview)
+    return render(request, 'recruitment/interview_form.html', {'form': form, 'interview': interview})
+
+@login_required
+@user_passes_test(is_interviewer)
+def interview_delete(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        interview.delete()
+        messages.success(request, 'Interview deleted successfully.')
+        return redirect('recruitment:interview_list')
+    return render(request, 'recruitment/interview_confirm_delete.html', {'interview': interview})
+
+@login_required
+@user_passes_test(is_interviewer)
+def interview_update_status(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in dict(Interview.STATUS_CHOICES):
+            interview.status = new_status
+            interview.save()
+            messages.success(request, f'Interview status updated to {new_status}.')
+        return redirect('recruitment:interview_list')
+    return render(request, 'recruitment/interview_update_status.html', {'interview': interview})
+
+@login_required
+@user_passes_test(is_interviewer)
+def interview_add_feedback(request, pk):
+    interview = get_object_or_404(Interview, pk=pk)
+    if request.method == 'POST':
+        feedback = request.POST.get('feedback')
+        rating = request.POST.get('rating')
+        if feedback:
+            interview.feedback = feedback
+        if rating:
+            interview.rating = int(rating)
+        interview.save()
+        messages.success(request, 'Feedback added successfully.')
+        return redirect('recruitment:interview_detail', pk=pk)
+    return render(request, 'recruitment/interview_feedback.html', {'interview': interview})

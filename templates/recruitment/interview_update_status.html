@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Interview Status{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Update Interview Status</h1>
+                    <p class="mt-1 text-sm text-indigo-100">{{ interview.candidate.name }} - {{ interview.position.title
+                        }}</p>
+                </div>
+                <a href="{% url 'recruitment:interview_list' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Back to List
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-4">
+            <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Current Status</h2>
+                <div class="flex items-center">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                        {% if interview.status == 'scheduled' %}bg-yellow-100 text-yellow-800
+                        {% elif interview.status == 'completed' %}bg-green-100 text-green-800
+                        {% elif interview.status == 'cancelled' %}bg-red-100 text-red-800
+                        {% endif %}">
+                        {{ interview.get_status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700">New Status</label>
+                    <select name="status" id="status"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        {% for value, label in interview.STATUS_CHOICES %}
+                        <option value="{{ value }}" {% if value==interview.status %}selected{% endif %}>{{ label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'recruitment:interview_list' %}"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Update Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

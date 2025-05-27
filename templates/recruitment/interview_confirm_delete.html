@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Interview{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-red-600 to-red-700 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Delete Interview</h1>
+                    <p class="mt-1 text-sm text-red-100">Are you sure you want to delete this interview?</p>
+                </div>
+                <a href="{% url 'recruitment:interview_list' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Cancel
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-4">
+            <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Warning</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p>This action cannot be undone. This will permanently delete the interview for {{
+                                interview.candidate.name }} - {{ interview.position.title }}.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Interview Details</h2>
+                <dl class="grid grid-cols-1 gap-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Candidate</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ interview.candidate.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Position</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ interview.position.title }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Scheduled Date</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ interview.scheduled_date|date:"F d, Y" }} at {{
+                            interview.scheduled_date|time:"H:i" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Status</dt>
+                        <dd class="mt-1">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if interview.status == 'scheduled' %}bg-yellow-100 text-yellow-800
+                                {% elif interview.status == 'completed' %}bg-green-100 text-green-800
+                                {% elif interview.status == 'cancelled' %}bg-red-100 text-red-800
+                                {% endif %}">
+                                {{ interview.get_status_display }}
+                            </span>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <a href="{% url 'recruitment:interview_list' %}"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Cancel
+                </a>
+                <form method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Delete Interview
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

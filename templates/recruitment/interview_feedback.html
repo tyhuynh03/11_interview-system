@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Interview Feedback{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Add Interview Feedback</h1>
+                    <p class="mt-1 text-sm text-indigo-100">{{ interview.candidate.name }} - {{ interview.position.title }}</p>
+                </div>
+                <a href="{% url 'recruitment:interview_detail' interview.id %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Back to Interview
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-4">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="feedback" class="block text-sm font-medium text-gray-700">Feedback</label>
+                    <textarea name="feedback" id="feedback" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">{{ interview.feedback }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Rating</label>
+                    <div class="mt-2 flex items-center space-x-2">
+                        {% for i in "12345" %}
+                        <button type="button" onclick="setRating({{ forloop.counter }})" class="focus:outline-none">
+                            <svg class="h-8 w-8 rating-star {% if forloop.counter <= interview.rating %}text-yellow-400{% else %}text-gray-300{% endif %}" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="rating" value="{{ interview.rating|default:0 }}">
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'recruitment:interview_detail' interview.id %}"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save Feedback
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+function setRating(rating) {
+    document.getElementById('rating').value = rating;
+    const stars = document.querySelectorAll('.rating-star');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.remove('text-gray-300');
+            star.classList.add('text-yellow-400');
+        } else {
+            star.classList.remove('text-yellow-400');
+            star.classList.add('text-gray-300');
+        }
+    });
+}
+</script>
+{% endblock %}
+{% endblock %} 

@@ -39,6 +39,13 @@ urlpatterns = [
     path('calendar/schedule/', views.schedule_interview, name='schedule_interview'),
     path('interview/confirm/<int:interview_id>/', views.confirm_interview, name='confirm_interview'),
     
+    # Interview CRUD URLs
+    path('interview/<int:pk>/', views.interview_detail, name='interview_detail'),
+    path('interview/<int:pk>/edit/', views.interview_edit, name='interview_edit'),
+    path('interview/<int:pk>/delete/', views.interview_delete, name='interview_delete'),
+    path('interview/<int:pk>/update-status/', views.interview_update_status, name='interview_update_status'),
+    path('interview/<int:pk>/feedback/', views.interview_add_feedback, name='interview_add_feedback'),
+    
     path('applications/', views.application_management, name='application_management'),
     path('applications/<int:pk>/', views.application_detail, name='application_detail'),
     path('applications/<int:pk>/update-status/', views.update_application_status, name='update_application_status'),

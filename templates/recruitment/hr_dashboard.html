@@ -8,12 +8,12 @@
         <h1 class="text-2xl font-bold text-white">HR Dashboard</h1>
         <p class="mt-1 max-w-2xl text-sm text-blue-100">Manage recruitment process and candidates</p>
     </div>
-    
+
     <div class="border-t border-gray-200">
         <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
             <div class="text-sm font-medium text-gray-500">Quick Stats</div>
         </div>
-        
+
         <div class="px-4 py-5 sm:p-6">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 <!-- Active Positions Card -->
@@ -26,11 +26,12 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-4 sm:px-6">
                         <div class="text-sm">
-                            <a href="{% url 'recruitment:position_list' %}" class="font-medium text-indigo-600 hover:text-indigo-500">View all positions</a>
+                            <a href="{% url 'recruitment:position_list' %}"
+                                class="font-medium text-indigo-600 hover:text-indigo-500">View all positions</a>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Pending Applications Card -->
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
@@ -41,11 +42,12 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-4 sm:px-6">
                         <div class="text-sm">
-                            <a href="{% url 'recruitment:application_management' %}" class="font-medium text-indigo-600 hover:text-indigo-500">Review applications</a>
+                            <a href="{% url 'recruitment:application_management' %}"
+                                class="font-medium text-indigo-600 hover:text-indigo-500">Review applications</a>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Upcoming Interviews Card -->
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">
@@ -56,12 +58,13 @@
                     </div>
                     <div class="bg-gray-50 px-4 py-4 sm:px-6">
                         <div class="text-sm">
-                            <a href="{% url 'recruitment:interview_list' %}" class="font-medium text-indigo-600 hover:text-indigo-500">View schedule</a>
+                            <a href="{% url 'recruitment:interview_list' %}"
+                                class="font-medium text-indigo-600 hover:text-indigo-500">View schedule</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Recent Applications -->
             <div class="mt-8">
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Applications</h3>
@@ -72,10 +75,18 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applied Date</th>
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Candidate</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Position</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Applied Date</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Status</th>
                                             <th scope="col" class="relative px-6 py-3">
                                                 <span class="sr-only">Actions</span>
                                             </th>
@@ -87,30 +98,53 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
                                                     <div class="ml-4">
-                                                        <div class="text-sm font-medium text-gray-900">{{ application.candidate.name }}</div>
-                                                        <div class="text-sm text-gray-500">{{ application.candidate.email }}</div>
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            {% if application.candidate %}
+                                                            {{ application.candidate.name }}
+                                                            {% else %}
+                                                            N/A
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="text-sm text-gray-500">
+                                                            {% if application.candidate %}
+                                                            {{ application.candidate.email }}
+                                                            {% else %}
+                                                            N/A
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ application.position.title }}</div>
-                                                <div class="text-sm text-gray-500">{{ application.position.department }}</div>
+                                                <div class="text-sm text-gray-900">{{ application.position.title }}
+                                                </div>
+                                                <div class="text-sm text-gray-500">{{ application.position.department }}
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ application.created_at|date:"M d, Y" }}</div>
+                                                <div class="text-sm text-gray-900">
+                                                    {% if application.created_at %}
+                                                    {{ application.created_at|date:"d/m/Y" }}
+                                                    {% else %}
+                                                    N/A
+                                                    {% endif %}
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                <span
+                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     {{ application.status }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="{% url 'recruitment:application_detail' application.id %}" class="text-indigo-600 hover:text-indigo-900">Review</a>
+                                                <a href="{% url 'recruitment:application_detail' application.id %}"
+                                                    class="text-indigo-600 hover:text-indigo-900">Review</a>
                                             </td>
                                         </tr>
                                         {% empty %}
                                         <tr>
-                                            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            <td colspan="5"
+                                                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                                 No recent applications
                                             </td>
                                         </tr>
@@ -122,12 +156,13 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Quick Actions -->
             <div class="mt-8">
                 <h3 class="text-lg leading-6 font-medium text-gray-900">Quick Actions</h3>
                 <div class="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                    <div
+                        class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                         <div class="flex-1 min-w-0">
                             <a href="{% url 'recruitment:position_list' %}" class="focus:outline-none">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
@@ -136,8 +171,9 @@
                             </a>
                         </div>
                     </div>
-                    
-                    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+
+                    <div
+                        class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                         <div class="flex-1 min-w-0">
                             <a href="{% url 'recruitment:candidate_create' %}" class="focus:outline-none">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
@@ -146,8 +182,9 @@
                             </a>
                         </div>
                     </div>
-                    
-                    <div class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+
+                    <div
+                        class="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
                         <div class="flex-1 min-w-0">
                             <a href="{% url 'recruitment:application_management' %}" class="focus:outline-none">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
@@ -158,7 +195,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Quick Links -->
             <div class="mt-8 bg-white shadow rounded-lg p-4">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Links</h2>
@@ -169,7 +206,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'recruitment:application_management' %}" class="text-indigo-600 hover:text-indigo-900">
+                        <a href="{% url 'recruitment:application_management' %}"
+                            class="text-indigo-600 hover:text-indigo-900">
                             Manage Applications
                         </a>
                     </li>
